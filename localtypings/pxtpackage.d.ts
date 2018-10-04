@@ -114,7 +114,7 @@ declare namespace pxt {
         buyUrl?: string;
         feedbackUrl?: string;
         responsive?: boolean;
-        cardType?: "file" | "example" | "codeExample" | "tutorial" | "side" | "template" | "package" | "hw";
+        cardType?: "file" | "example" | "codeExample" | "tutorial" | "side" | "template" | "package" | "hw" | "newproject";
 
         header?: string;
         any?: number;

@@ -103,7 +103,10 @@ export class Projects extends data.Component<ISettingsProps, ProjectsState> {
                 const prj = pxt.Util.clone(pxt.appTarget.blocksprj);
                 prj.config.dependencies = {}; // clear all dependencies
                 this.chgCode(scr, true, prj); break;
-            case "example": this.chgCode(scr, true); break;
+            case "newproject":
+            case "example": 
+                this.chgCode(scr, true); break;
+            case "newjsproject":
             case "codeExample": this.chgCode(scr, false); break;
             case "side":
                 this.props.parent.newEmptyProject(scr.name, scr.url);
@@ -317,7 +320,6 @@ export class ProjectsCarousel extends data.Component<ProjectsCarouselProps, Proj
         this.closeDetail = this.closeDetail.bind(this);
         this.closeDetailOnEscape = this.closeDetailOnEscape.bind(this);
         this.reload = this.reload.bind(this);
-        this.newProject = this.newProject.bind(this);
         this.handleCardClick = this.handleCardClick.bind(this);
     }
 
@@ -344,11 +346,6 @@ export class ProjectsCarousel extends data.Component<ProjectsCarouselProps, Proj
     fetchLocalData(): pxt.workspace.Header[] {
         let headers: pxt.workspace.Header[] = this.getData("header:*")
         return headers;
-    }
-
-    newProject() {
-        pxt.tickEvent("projects.new", undefined, { interactiveConsent: true });
-        this.props.parent.newProject();
     }
 
     closeDetail() {
@@ -398,13 +395,15 @@ export class ProjectsCarousel extends data.Component<ProjectsCarouselProps, Proj
     }
 
     renderCore() {
-        const { name, path, selectedIndex } = this.props;
+        const { path, selectedIndex, parent } = this.props;
 
         if (path) {
             // Fetch the gallery
             this.hasFetchErrors = false;
 
-            const cards = this.fetchGallery(path);
+            const allCards = this.fetchGallery(path);
+            const newCards = allCards.filter(card => card.cardType == "newproject");
+            const cards = allCards.filter(card => card.cardType != "newproject");
             if (this.hasFetchErrors) {
                 return <div className="ui carouselouter">
                     <div role="button" className="carouselcontainer" tabIndex={0} onClick={this.reload}>
@@ -414,6 +413,11 @@ export class ProjectsCarousel extends data.Component<ProjectsCarouselProps, Proj
             } else {
                 return <div>
                     <carousel.Carousel ref="carousel" bleedPercent={20} selectedIndex={selectedIndex}>
+                        {newCards.map(scr => <NewProjectCard
+                            parent={this.props.parent}
+                            title={scr.description}
+                            label={scr.name}
+                        />)}
                         {cards.map((scr, index) =>
                             <ProjectsCodeCard
                                 className="example"
@@ -456,13 +460,10 @@ export class ProjectsCarousel extends data.Component<ProjectsCarouselProps, Proj
             const headers = this.fetchLocalData();
             const showNewProject = pxt.appTarget.appTheme && !pxt.appTarget.appTheme.hideNewProjectButton;
             return <carousel.Carousel bleedPercent={20}>
-                {showNewProject ? <div role="button" className="ui card link newprojectcard" title={lf("Creates a new empty project")}
-                    onClick={this.newProject} onKeyDown={sui.fireClickOnEnter} >
-                    <div className="content">
-                        <sui.Icon icon="huge add circle" />
-                        <span className="header">{lf("New Project")}</span>
-                    </div>
-                </div> : undefined}
+                {showNewProject ? <NewProjectCard
+                    parent={parent}
+                    title={lf("Creates a new empty project")}
+                    label={lf("New Project")} /> : undefined}
                 {headers.map((scr, index) =>
                     <ProjectsCodeCard
                         key={'local' + scr.id + scr.recentUse}
@@ -478,6 +479,37 @@ export class ProjectsCarousel extends data.Component<ProjectsCarouselProps, Proj
                 )}
             </carousel.Carousel>
         }
+    }
+}
+
+interface NewProjectCardProps {
+    parent: pxt.editor.IProjectView;
+    label: string;
+    title?: string;
+    className?: string;
+    options?: pxt.editor.ProjectCreationOptions;
+}
+
+class NewProjectCard extends sui.StatelessUIElement<NewProjectCardProps> {
+    constructor(props: NewProjectCardProps) {
+        super(props);
+        this.handleClick = this.handleClick.bind(this);
+    }
+
+    handleClick() {
+        pxt.tickEvent("projects.new", undefined, { interactiveConsent: true });
+        this.props.parent.newProject(this.props.options);
+    }
+
+    renderCore() {
+        const { label, title, className } = this.props;
+        return <div role="button" className={`ui card link newprojectcard ${className || ""}`} title={title || ""}
+            onClick={this.handleClick} onKeyDown={sui.fireClickOnEnter} >
+            <div className="content">
+                <sui.Icon icon="huge add circle" />
+                <span className="header">{label || lf("New Project")}</span>
+            </div>
+        </div>;
     }
 }
 

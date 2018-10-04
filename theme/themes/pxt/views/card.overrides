@@ -81,6 +81,9 @@ a.ui.card:focus,
     border: @linkHoverBorder;
 }
 
+.ui.card.link.newprojectcard.secondary {
+    background: fade(@secondaryColor, 90%) !important;
+}
 
 /* Example card */
 

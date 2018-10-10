@@ -66,12 +66,14 @@ namespace pxsim {
 
     export interface SimulatorEventBusMessage extends SimulatorMessage {
         type: "eventbus";
+        broadcast: true;
         id: number;
         eventid: number;
         value?: number;
     }
     export interface SimulatorSerialMessage extends SimulatorMessage {
         type: "serial";
+        broadcast: true;
         id: string;
         data: string;
         sim?: boolean;
@@ -90,6 +92,7 @@ namespace pxsim {
     }
     export interface SimulatorRadioPacketMessage extends SimulatorMessage {
         type: "radiopacket";
+        broadcast: true;
         rssi: number;
         serial: number;
         time: number;
@@ -98,16 +101,19 @@ namespace pxsim {
     }
     export interface SimulatorInfraredPacketMessage extends SimulatorMessage {
         type: "irpacket";
+        broadcast: true;
         packet: Uint8Array; // base64 encoded
     }
 
     export interface SimulatorBLEPacketMessage extends SimulatorMessage {
         type: "blepacket";
+        broadcast: true;
         packet: Uint8Array;
     }
 
     export interface SimulatorI2CMessage extends SimulatorMessage {
         type: "i2c";
+        broadcast: true;
         data: Uint8Array;
     }
 

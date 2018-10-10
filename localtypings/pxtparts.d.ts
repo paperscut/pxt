@@ -139,6 +139,7 @@ declare namespace pxsim {
 
     export interface SimulatorMessage {
         type: string;
+        broadcast?: boolean; // broadcast to other simulators
     }
 
     // type=debugger

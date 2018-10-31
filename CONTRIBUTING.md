@@ -27,7 +27,7 @@ Your pull request should:
 
 ## Issue tracker guidance
 
-Going ahead all user facing issues should go to issue tracker in a specific target. For example any issue which impacts microbit user should go to pxt-microbit issue tracker. PXT releases one target every friday and we can look at that target repo issue tracker and triage all issues which are relevant just for that target. 
+Going ahead all user facing issues should go to issue tracker in a specific target. For example any issue which impacts microbit user should go to pxt-microbit issue tracker. PXT releases one target every Friday and we can look at that target repo issue tracker and triage all issues which are relevant just for that target. 
 
 It is possible, issue is underlying PXT issue and can prop up in multiple editors. Even then file it on the target repo where you reproduce it. Scanning PXT repo every Friday is not a manageable thing to do if we file all the issues there. Duplicates will be closed when we continuously release each target.
 
